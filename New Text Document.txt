@@ -1,0 +1,210 @@
+var hand = new Image();   // Create new img element
+hand.src = './hand.png';
+
+var will = new Image();
+will.src = './will.jpg';
+
+window.addEventListener("load", () => {
+    console.log("Hello from Sam");
+
+    // Canvas and context
+    const canvas = document.querySelector("#canvas");
+    const ctx = canvas.getContext("2d");
+
+
+
+    // Resizing
+    canvas.height = 1000;
+    canvas.width = 1000;
+
+    // Initial positions
+    initialHandX = 100;
+    initialHandY = 400;
+
+    initialWillX = 800;
+    initialWillY = 400;
+
+    initialTextX = 300;
+    initialTextY = 200;
+
+    //  Drawing hand and will to its initial locations
+    ctx.drawImage(hand,initialHandX,initialHandY, 100, 100)
+    ctx.drawImage(will,initialWillX,initialWillY, 100, 100)
+    ctx.font = "100px Arial";
+    ctx.fillText("0 km/h", initialTextX, initialTextY, 300);
+
+    // Variables
+    let dragging = false;
+    
+    // For distance calculation
+    let x1 = initialHandX;
+    let y1 = initialHandY; 
+
+    let x2 = 0;
+    let y2 = 0;
+
+    let distance = 0;
+
+    // For speed calculation
+    var startDate;
+    var endDate;
+    let speed;
+    
+    // console.log("Current Time: ", time);
+    
+    // For removing the hand while moving
+    removePositionx = initialHandX;
+    removePositiony =initialHandY;
+
+    function calculateSpeed(){
+        var a = x1 - x2;
+        var b = y1 - y2;
+
+        endDate = new Date();
+
+        console.log("X1: ", x1, "X2: ", x2);
+
+        console.log("A: ", a, "B: ", b);
+
+        var c = Math.sqrt( a*a + b*b );
+
+        console.log("Distance: ", c);
+
+        console.log("TIME DIFF: ", (endDate.getTime() - startDate.getTime()) / 1000);
+
+        speed = c / ((endDate.getTime() - startDate.getTime()) / 1000);
+
+        console.log("Speed: ", speed);
+    }
+
+    function startPosition(e){
+
+        startDate = new Date();
+
+        dragging = true;
+ 
+        const rect = canvas.getBoundingClientRect()
+        const sx1 = e.x - rect.left
+        const sy1 = e.y - rect.top
+        console.log("x1: " + sx1 + " y1: " + sy1)
+
+        x1 = sx1;
+        y1 = sy1;
+    }
+
+    function finishedPosition(e){
+        dragging = false;
+ 
+        const rect = canvas.getBoundingClientRect()
+        const fx1 = e.x - rect.left
+        const fy1 = e.y - rect.top
+        console.log("x2: " + fx1 + " y2: " + fy1);
+
+        x2 = fx1;
+        y2 = fy1;
+
+        calculateSpeed();
+    }
+
+    function eraseText(){
+
+        console.log("I am here coffee");
+
+        // var textData = ctx.createImageData(100, 300);
+        // for (var i = textData.data.length; --i >= 0; ){
+        //     textData.data[i] = 0;
+        // }
+        // ctx.putImageData(textData, initialTextX, initialTextY);
+        ctx.beginPath();
+        ctx.rect(initialTextX, initialTextY, 300, 100);
+        ctx.stroke();
+
+        console.log("I am here coffee");
+        
+    }
+
+    function draw(e) {
+        if(!dragging) return;
+
+        var handData = ctx.createImageData(100, 100);
+        for (var i = handData.data.length; --i >= 0; ){
+            handData.data[i] = 0;
+        }
+        ctx.putImageData(handData, removePositionx, removePositiony);
+
+        const rect = canvas.getBoundingClientRect()
+        const dx1 = e.clientX - rect.left
+        const dy1 = e.clientY - rect.top
+        console.log("x3: " + dx1 + " y3: " + dy1);
+
+        ctx.drawImage(hand, dx1-50, dy1-50, 100, 100);
+        removePositionx = dx1-50;
+        removePositiony = dy1-50;
+        
+        if(removePositionx > initialWillX){
+            eraseText();
+        }
+        
+    }
+
+    function startPositionForMobile(e){
+
+        startDate = new Date();
+
+        dragging = true;
+ 
+        const rect = canvas.getBoundingClientRect()
+        const sx1 = e.touches[0].clientX - rect.left
+        const sy1 = e.touches[0].clientY - rect.top
+        console.log("x1: " + sx1 + " y1: " + sy1)
+
+        x1 = sx1;
+        y1 = sy1;
+    }
+
+    function finishedPositionForMobile(e){
+        dragging = false;
+        calculateSpeed();
+    }
+
+
+    function drawForMobile(e){
+        if(!dragging) return;
+
+        // console.log("Touching: ", e.touches[0].clientX, e.touches[0].clientY);
+
+        var handData = ctx.createImageData(100, 100);
+        // console.log("Hand: ", handData);
+        for (var i = handData.data.length; --i >= 0; ){
+            handData.data[i] = 0;
+        }
+        ctx.putImageData(handData, removePositionx, removePositiony);
+
+        const rect = canvas.getBoundingClientRect()
+        const dx1 = e.touches[0].clientX - rect.left
+        const dy1 = e.touches[0].clientY - rect.top
+        console.log("x3: " + dx1 + " y3: " + dy1);
+
+        ctx.drawImage(hand, dx1-50, dy1-50, 100, 100);
+        removePositionx = dx1 - 50;
+        removePositiony = dy1 - 50;
+
+        x2 = removePositionx;
+        y2 = removePositiony;
+
+    }
+
+
+    canvas.addEventListener("mousedown", startPosition);
+    canvas.addEventListener("mouseup", finishedPosition);
+    canvas.addEventListener("mousemove", draw);
+
+    canvas.addEventListener("touchstart", startPositionForMobile);
+    canvas.addEventListener("touchend", finishedPositionForMobile);
+    canvas.addEventListener("touchmove", drawForMobile);
+
+
+});
+
+
+
