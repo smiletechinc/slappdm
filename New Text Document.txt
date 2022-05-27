@@ -2,7 +2,7 @@ var hand = new Image();   // Create new img element
 hand.src = './hand.png';
 
 var will = new Image();
-will.src = './will.jpg';
+will.src = './shahbaz_sharif_1.jpeg';
 
 window.addEventListener("load", () => {
     console.log("Hello from Sam");

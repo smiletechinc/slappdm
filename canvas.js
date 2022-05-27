@@ -2,7 +2,7 @@ var hand = new Image();   // Create new img element
 hand.src = './handFinal.png';
 
 var will = new Image();
-will.src = './WillFinal.png';
+will.src = './shahbaz_sharif_1.jpeg';
 
 
 function continueBox(){
@@ -69,7 +69,7 @@ function drawGame(){
     ctx.font = widthSize + "px Arial";
     ctx.fillText("0 km/h", initialTextX, initialTextY, widthSize *4);
 
-    will.src = './WillFinal2.png'; 
+    will.src = './shahbaz_sharif_2.jpeg'; 
 
     // Variables
     let dragging = false;
